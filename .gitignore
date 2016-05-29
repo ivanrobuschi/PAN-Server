@@ -2,3 +2,4 @@ PANserver/obj/*
 packages/*
 PANserver/bin/*
 *.cache
+*.suo
