@@ -11,8 +11,8 @@ namespace PANserver
         public List<string> maskList = new List<string>();
         string defaultFileName = @"C:\Temp\PANs.txt";
         //string defaultFileName = @"C:\Temp\PANsTest.txt";
-        string invalidPANerrorMSG = "PAN invalido";
-        string invalidMaskErrorMSG = "PAN mascherato invalido";
+        public string invalidPANerrorMSG = "PAN invalido";
+        public string invalidMaskErrorMSG = "PAN mascherato invalido";
         //string PANDoesntExistErrorMSG = "Il PAN dato non esiste";
 
         public PANserver()
@@ -117,9 +117,11 @@ namespace PANserver
             {
                 int letterIndex = random.Next(26);
                 string currentCharString = alphabet[letterIndex].ToString();
-                if (letterIndex.Equals(previousCharString))
+                if (currentCharString.Equals(previousCharString))
                 {
-                    currentCharString = alphabet[letterIndex + 1].ToString();
+                    letterIndex++;
+                    if (letterIndex == 26) { letterIndex = 0; }
+                    currentCharString = alphabet[letterIndex].ToString();
                 }
                 previousCharString = currentCharString;
                 maskedPAN += currentCharString;
