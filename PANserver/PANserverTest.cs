@@ -67,6 +67,14 @@ namespace PANserver
             actualPAN.Should().Be(expectedPAN);
         }
 
+        [TestCase("0123456789")]
+        [TestCase("ABCDE")]
+        public void GetPANShouldReturnAnErrorIfWrongMaskLength(string wrongMask)
+        {
+            var sut = new PANserver();
+            sut.GetPAN(wrongMask, testFileName).Should().Be(sut.invalidMaskErrorMSG);
+        }
+
         [TestCase("1234567890123456", "123456UHGTRA3456")]
         [TestCase("2345678901234567", "234567BDJXHW4567")]
         [TestCase("345123567ABCDEFG", "PAN invalido")]
