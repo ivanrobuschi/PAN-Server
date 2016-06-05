@@ -53,7 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MaskGenerator.cs" />
+    <Compile Include="MaskGeneratorTest.cs" />
     <Compile Include="PANArchiveManager.cs" />
+    <Compile Include="PANArchiveManagerTest.cs" />
     <Compile Include="PANserver.cs" />
     <Compile Include="PANserverTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
