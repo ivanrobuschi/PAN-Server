@@ -45,16 +45,17 @@ namespace PANserver
         [Test]
         public void CreateListsShouldCreatePANsAndMasksListsFromFile()
         {
-            var sut = new PANserver();
+            var server = new PANserver();
+            var sut = new PANArchiveManager();
             testExpectedPanList.Clear();
             testExpectedMaskList.Clear();
             testExpectedPanList.Add("1234567890123456");
             testExpectedPanList.Add("2345678901234567");
             testExpectedMaskList.Add("123456UHGTRA3456");
             testExpectedMaskList.Add("234567BDJXHW4567");
-            sut.CreateLists(testFileName);
-            testExpectedPanList.Should().BeEquivalentTo(sut.panList);
-            testExpectedMaskList.Should().BeEquivalentTo(sut.maskList);
+            sut.CreateLists(testFileName, out server.panList, out server.maskList);
+            testExpectedPanList.Should().BeEquivalentTo(server.panList);
+            testExpectedMaskList.Should().BeEquivalentTo(server.maskList);
         }
 
         [TestCase("123456UHGTRA3456", "1234567890123456")]
@@ -106,15 +107,22 @@ namespace PANserver
         public void SaveListsShouldWritePANsAndMasksListsToFile()
         {
             //This test needs that sut.CreateLists is working correctly
-            var sut = new PANserver();
-            sut.panList.Add("1234567890123456");
-            sut.panList.Add("2345678901234567");
-            sut.maskList.Add("123456UHGTRA3456");
-            sut.maskList.Add("234567BDJXHW4567");
-            sut.SaveLists(testFileName);
-            sut.CreateLists(testFileName);
-            sut.panList.Should().BeEquivalentTo(sut.panList);
-            sut.maskList.Should().BeEquivalentTo(sut.maskList);
+            var server = new PANserver();
+            var sut = new PANArchiveManager();
+            server.panList.Add("1234567890123456");
+            server.panList.Add("2345678901234567");
+            server.maskList.Add("123456UHGTRA3456");
+            server.maskList.Add("234567BDJXHW4567");
+            testExpectedPanList.Clear();
+            testExpectedMaskList.Clear();
+            testExpectedPanList.Add("1234567890123456");
+            testExpectedPanList.Add("2345678901234567");
+            testExpectedMaskList.Add("123456UHGTRA3456");
+            testExpectedMaskList.Add("234567BDJXHW4567");
+            sut.SaveLists(testFileName, server.panList, server.maskList);
+            sut.CreateLists(testFileName, out server.panList, out server.maskList);
+            server.panList.Should().BeEquivalentTo(testExpectedPanList);
+            server.maskList.Should().BeEquivalentTo(testExpectedMaskList);
 
             //metodi: panExists, createMask, addData
         }

@@ -46,31 +46,18 @@ namespace PANserver
             return exists;
         }
 
-        public void CreateLists(string fileName)
-        {
-            var reader = new StreamReader(fileName);
-
-            panList.Clear();
-            maskList.Clear();
-
-            while ((!reader.EndOfStream))
-            {
-                string currentRow= reader.ReadLine();
-                panList.Add(currentRow.Substring(0, 16));
-                maskList.Add(currentRow.Substring(17, 16));
-            }
-            reader.Close();
-        }
+        
 
         public string GetPAN(string mask, string fileName)
         {
+            var archive = new PANArchiveManager();
             if (mask.Length != 16)
             {
                 return invalidMaskErrorMSG;
             }
             else
             {
-                CreateLists(fileName);
+                archive.CreateLists(fileName, out panList, out maskList);
                 int index = maskList.IndexOf(mask);
                 if (index < 0)
                 {
@@ -85,22 +72,23 @@ namespace PANserver
 
         public string GetMask(string PAN, string fileName)
         {
-            var MaskGen = new MaskGenerator();
+            var archive = new PANArchiveManager();
+            var maskGen = new MaskGenerator();
             if (!AcceptPAN(PAN))
             {
                 return invalidPANerrorMSG;
             }
             else
             {
-                CreateLists(fileName);
+                archive.CreateLists(fileName, out panList, out maskList);
                 string mask;
                 int index = panList.IndexOf(PAN);
                 if (index < 0)
                 {
-                    mask = MaskGen.CreateMask(PAN);
+                    mask = maskGen.CreateMask(PAN);
                     panList.Add(PAN);
                     maskList.Add(mask);
-                    SaveLists(fileName);
+                    archive.SaveLists(fileName, panList, maskList);
                 }
                 else
                 {
@@ -108,18 +96,6 @@ namespace PANserver
                 }
                 return mask;
             }
-        }
-
-        public void SaveLists(string fileName)
-        {
-            var writer = new StreamWriter(fileName);
-
-            for (int i = 0; i < panList.Count(); i++)
-            {
-                string fileLine = panList[i] + " " + maskList[i];
-                writer.WriteLine(fileLine);
-            }
-            writer.Close();
         }
     }
 }
