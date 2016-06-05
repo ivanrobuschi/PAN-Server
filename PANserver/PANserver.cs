@@ -85,6 +85,7 @@ namespace PANserver
 
         public string GetMask(string PAN, string fileName)
         {
+            var MaskGen = new MaskGenerator();
             if (!AcceptPAN(PAN))
             {
                 return invalidPANerrorMSG;
@@ -96,7 +97,9 @@ namespace PANserver
                 int index = panList.IndexOf(PAN);
                 if (index < 0)
                 {
-                    mask = CreateMask(PAN);
+                    mask = MaskGen.CreateMask(PAN);
+                    panList.Add(PAN);
+                    maskList.Add(mask);
                     SaveLists(fileName);
                 }
                 else
@@ -105,31 +108,6 @@ namespace PANserver
                 }
                 return mask;
             }
-        }
-
-        public string CreateMask(string PAN)
-        {
-            string maskedPAN = PAN.Substring(0, 6);
-            const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            string previousCharString = "";
-            var random = new Random();
-            for(int i = 6; i <= 11; i++)
-            {
-                int letterIndex = random.Next(26);
-                string currentCharString = alphabet[letterIndex].ToString();
-                if (currentCharString.Equals(previousCharString))
-                {
-                    letterIndex++;
-                    if (letterIndex == 26) { letterIndex = 0; }
-                    currentCharString = alphabet[letterIndex].ToString();
-                }
-                previousCharString = currentCharString;
-                maskedPAN += currentCharString;
-            }
-            maskedPAN += PAN.Substring(12, 4);
-            panList.Add(PAN);
-            maskList.Add(maskedPAN);
-            return maskedPAN;
         }
 
         public void SaveLists(string fileName)

@@ -88,7 +88,7 @@ namespace PANserver
         [TestCase("1234567890123456")]
         public void CreateMaskShouldCreateMaskedPanFromPan(string testPAN)
         {
-            var sut = new PANserver();
+            var sut = new MaskGenerator();
             string maskedPAN = sut.CreateMask(testPAN);
             testPAN.Substring(0, 6).Should().Be(maskedPAN.Substring(0, 6));
             testPAN.Substring(12, 4).Should().Be(maskedPAN.Substring(12, 4));
