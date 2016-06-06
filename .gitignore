@@ -1,5 +1,5 @@
-PANserver/obj/*
+**/obj/*
 packages/*
-PANserver/bin/*
+**/bin/*
 *.cache
 *.suo
