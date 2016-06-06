@@ -9,15 +9,19 @@ namespace PANserver
     {
         public List<string> panList = new List<string>();
         public List<string> maskList = new List<string>();
-        string defaultFileName = @"C:\Temp\PANs.txt";
+        string fileName = @"C:\Temp\PANs.txt";
         //string defaultFileName = @"C:\Temp\PANsTest.txt";
         public string invalidPANerrorMSG = "PAN invalido";
         public string invalidMaskErrorMSG = "PAN mascherato invalido";
         //string PANDoesntExistErrorMSG = "Il PAN dato non esiste";
 
-        public PANserver()
+        public PANserver(string customFileName)
         {
-            defaultFileName = AppDomain.CurrentDomain.BaseDirectory + "\\PANsTest.txt";
+            if (!string.IsNullOrEmpty(customFileName))
+            {
+                    fileName = customFileName;
+            }
+            //defaultFileName = AppDomain.CurrentDomain.BaseDirectory + "\\PANsTest.txt";
         }
 
         public bool AcceptPAN(string inputPAN)
@@ -32,7 +36,7 @@ namespace PANserver
             return validPAN;
         }
 
-        public bool GivenPANAlredyExists(string inputPAN, string fileName)
+        public bool GivenPANAlredyExists(string inputPAN)
         {
             var reader = new StreamReader(fileName);
             bool exists = false;
@@ -48,7 +52,7 @@ namespace PANserver
 
         
 
-        public string GetPAN(string mask, string fileName)
+        public string GetPAN(string mask)
         {
             var archive = new PANArchiveManager();
             if (mask.Length != 16)
@@ -70,7 +74,7 @@ namespace PANserver
             }
         }
 
-        public string GetMask(string PAN, string fileName)
+        public string GetMask(string PAN)
         {
             var archive = new PANArchiveManager();
             var maskGen = new MaskGenerator();

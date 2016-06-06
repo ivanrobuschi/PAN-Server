@@ -28,7 +28,7 @@ namespace PANserver
         [TestCase("1234ac", false)]
         public void AcceptPANShouldAccept16NumberStringAsParameter(string inputPAN, bool expectedResult)
         {
-            var sut = new PANserver();
+            var sut = new PANserver(testFileName);
             sut.AcceptPAN(inputPAN).Should().Be(expectedResult);
         }
 
@@ -39,14 +39,14 @@ namespace PANserver
             //This method needs a manually created test file to work
             //var reader = new StreamReader(testFileName);
             //string testFirstLinePAN = reader.ReadLine().Substring(0, 15);
-            var sut = new PANserver();
-            sut.GivenPANAlredyExists(givenPAN, testFileName).Should().Be(expectedResult);
+            var sut = new PANserver(testFileName);
+            sut.GivenPANAlredyExists(givenPAN).Should().Be(expectedResult);
         }
 
         [Test]
         public void CreateListsShouldCreatePANsAndMasksListsFromFile()
         {
-            var server = new PANserver();
+            var server = new PANserver(testFileName);
             var sut = new PANArchiveManager();
             testExpectedPanList.Clear();
             testExpectedMaskList.Clear();
@@ -64,8 +64,8 @@ namespace PANserver
         [TestCase("0898656442278686", "")]
         public void GetPANShouldReturnPANFromMask(string mask, string expectedPAN)
         {
-            var sut = new PANserver();
-            string actualPAN = sut.GetPAN(mask, testFileName);
+            var sut = new PANserver(testFileName);
+            string actualPAN = sut.GetPAN(mask);
             actualPAN.Should().Be(expectedPAN);
         }
 
@@ -73,8 +73,8 @@ namespace PANserver
         [TestCase("ABCDE")]
         public void GetPANShouldReturnAnErrorIfWrongMaskLength(string wrongMask)
         {
-            var sut = new PANserver();
-            sut.GetPAN(wrongMask, testFileName).Should().Be(sut.invalidMaskErrorMSG);
+            var sut = new PANserver(testFileName);
+            sut.GetPAN(wrongMask).Should().Be(sut.invalidMaskErrorMSG);
         }
 
         [TestCase("1234567890123456", "123456UHGTRA3456")]
@@ -82,8 +82,8 @@ namespace PANserver
         [TestCase("345123567ABCDEFG", "PAN invalido")]
         public void GetMaskShouldReturnMaskFromPan(string PAN, string expectedMask)
         {
-            var sut = new PANserver();
-            string actualMask = sut.GetMask(PAN, testFileName);
+            var sut = new PANserver(testFileName);
+            string actualMask = sut.GetMask(PAN);
             actualMask.Should().Be(expectedMask);
         }
     }

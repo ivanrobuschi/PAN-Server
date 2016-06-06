@@ -24,7 +24,7 @@ namespace PANserver
         public void SaveListsShouldWritePANsAndMasksListsToFile()
         {
             //This test needs that sut.CreateLists is working correctly
-            var server = new PANserver();
+            var server = new PANserver(testFileName);
             var sut = new PANArchiveManager();
             server.panList.Add("1234567890123456");
             server.panList.Add("2345678901234567");
