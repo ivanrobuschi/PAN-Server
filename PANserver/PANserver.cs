@@ -7,20 +7,17 @@ namespace PANserver
 {
     public class PANserver
     {
-        public List<string> panList = new List<string>();
-        public List<string> maskList = new List<string>();
-        string fileName = @"C:\Temp\PANs.txt";
+        public List<string> panList = new List<string>(); //To be removed
+        public List<string> maskList = new List<string>(); //To be removed
+        IPANArchiveManager _panArchiveManager;
         //string defaultFileName = @"C:\Temp\PANsTest.txt";
         public string invalidPANerrorMSG = "PAN invalido";
         public string invalidMaskErrorMSG = "PAN mascherato invalido";
         //string PANDoesntExistErrorMSG = "Il PAN dato non esiste";
 
-        public PANserver(string customFileName)
+        public PANserver(IPANArchiveManager panArchiveManager)
         {
-            if (!string.IsNullOrEmpty(customFileName))
-            {
-                    fileName = customFileName;
-            }
+            _panArchiveManager = panArchiveManager;
             //defaultFileName = AppDomain.CurrentDomain.BaseDirectory + "\\PANsTest.txt";
         }
 
@@ -36,47 +33,36 @@ namespace PANserver
             return validPAN;
         }
 
-        public bool GivenPANAlredyExists(string inputPAN)
-        {
-            var reader = new StreamReader(fileName);
-            bool exists = false;
+        //public bool GivenPANAlredyExists(string inputPAN)
+        //{
+        //    var reader = new StreamReader(fileName);
+        //    bool exists = false;
 
-            while ((!reader.EndOfStream)&&(exists == false))
-            {
-                string currentPAN = reader.ReadLine();
-                exists = (currentPAN.Substring(0, 16) == inputPAN);
-            }
-            reader.Close();
-            return exists;
-        }
+        //    while ((!reader.EndOfStream)&&(exists == false))
+        //    {
+        //        string currentPAN = reader.ReadLine();
+        //        exists = (currentPAN.Substring(0, 16) == inputPAN);
+        //    }
+        //    reader.Close();
+        //    return exists;
+        //}
 
         
 
         public string GetPAN(string mask)
         {
-            var archive = new PANArchiveManager();
             if (mask.Length != 16)
             {
                 return invalidMaskErrorMSG;
             }
             else
             {
-                archive.CreateLists(fileName, out panList, out maskList);
-                int index = maskList.IndexOf(mask);
-                if (index < 0)
-                {
-                    return "";
-                }
-                else
-                {
-                    return panList[index];
-                }
+                return _panArchiveManager.SearchPAN(mask);
             }
         }
 
         public string GetMask(string PAN)
         {
-            var archive = new PANArchiveManager();
             var maskGen = new MaskGenerator();
             if (!AcceptPAN(PAN))
             {
@@ -84,19 +70,11 @@ namespace PANserver
             }
             else
             {
-                archive.CreateLists(fileName, out panList, out maskList);
-                string mask;
-                int index = panList.IndexOf(PAN);
-                if (index < 0)
+                string mask = _panArchiveManager.SearchMask(PAN);
+                if (mask == null)
                 {
                     mask = maskGen.CreateMask(PAN);
-                    panList.Add(PAN);
-                    maskList.Add(mask);
-                    archive.SaveLists(fileName, panList, maskList);
-                }
-                else
-                {
-                    mask = maskList[index];
+                    _panArchiveManager.AddPanAndMask(PAN, mask);
                 }
                 return mask;
             }

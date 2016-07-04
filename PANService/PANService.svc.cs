@@ -14,14 +14,14 @@ namespace PANService
     {
         public string GetMask(string PAN)
         {
-            var server = new PANserver.PANserver(null);
+            var server = new PANserver.PANserver(new PANserver.PANArchiveManager(new PANserver.PANserverEntities()));
             string mask = server.GetMask(PAN);
             return mask;
         }
 
         public string GetPAN(string mask)
         {
-            var server = new PANserver.PANserver(null);
+            var server = new PANserver.PANserver(new PANserver.PANArchiveManager(new PANserver.PANserverEntities()));
             string PAN = server.GetPAN(mask);
             return PAN;
         }
