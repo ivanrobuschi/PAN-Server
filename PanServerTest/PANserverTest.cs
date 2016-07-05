@@ -9,11 +9,14 @@ namespace PANserver
     class PANserverTest
     {
         IPANArchiveManager _panArchiveManager;
+        IMaskGenerator _maskGen;
 
         [SetUp]
         public void SetUp()
         {
             _panArchiveManager = Substitute.For<IPANArchiveManager>();
+            _maskGen = Substitute.For<IMaskGenerator>();
+
         }
 
         [TestCase("1234567890123456", true)]
@@ -24,7 +27,7 @@ namespace PANserver
         [TestCase("1234ac", false)]
         public void AcceptPANShouldAccept16NumberStringAsParameter(string inputPAN, bool expectedResult)
         {
-            var sut = new PANserver(_panArchiveManager);
+            var sut = new PANserver(_panArchiveManager, _maskGen);
             sut.AcceptPAN(inputPAN).Should().Be(expectedResult);
         }
 
@@ -46,7 +49,7 @@ namespace PANserver
         {
             _panArchiveManager.SearchPAN(mask).Returns(expectedPAN);
 
-            var sut = new PANserver(_panArchiveManager);
+            var sut = new PANserver(_panArchiveManager, _maskGen);
             string actualPAN = sut.GetPAN(mask);
             actualPAN.Should().Be(expectedPAN);
         }
@@ -55,7 +58,7 @@ namespace PANserver
         [TestCase("ABCDE")]
         public void GetPANShouldReturnAnErrorIfWrongMaskLength(string wrongMask)
         {
-            var sut = new PANserver(_panArchiveManager);
+            var sut = new PANserver(_panArchiveManager, _maskGen);
             sut.GetPAN(wrongMask).Should().Be(sut.invalidMaskErrorMSG);
         }
 
@@ -66,20 +69,23 @@ namespace PANserver
         {
             _panArchiveManager.SearchMask(PAN).Returns(expectedMask);
 
-            var sut = new PANserver(_panArchiveManager);
+            var sut = new PANserver(_panArchiveManager, _maskGen);
             string actualMask = sut.GetMask(PAN);
             actualMask.Should().Be(expectedMask);
         }
 
-        [Test]
-        public void GetMaskShouldReturnANewMaskWhenPanIsNotFound()
+        [TestCase("1234567890123456", "123456UHGTRA3456")]
+        [TestCase("2345678901234567", "123456UHGTRA3456")]
+        public void GetMaskShouldReturnANewMaskWhenPanIsNotFound(string pan, string expectedMask)
         {
-            var pan = "1234567890123456";
             _panArchiveManager.SearchMask(pan).Returns((string)null);
 
-            var sut = new PANserver(_panArchiveManager);
+            _maskGen.CreateMask(pan).Returns(expectedMask);
+
+            var sut = new PANserver(_panArchiveManager, _maskGen);
             var newMask = sut.GetMask(pan);
             newMask.Length.Should().Be(16);
+            newMask.Should().Be(expectedMask);
             _panArchiveManager.Received().AddPanAndMask(pan, newMask);
         }
 

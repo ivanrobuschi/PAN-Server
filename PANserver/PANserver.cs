@@ -9,16 +9,16 @@ namespace PANserver
     {
         public List<string> panList = new List<string>(); //To be removed
         public List<string> maskList = new List<string>(); //To be removed
+
         IPANArchiveManager _panArchiveManager;
-        //string defaultFileName = @"C:\Temp\PANsTest.txt";
+        IMaskGenerator _maskGen;
         public string invalidPANerrorMSG = "PAN invalido";
         public string invalidMaskErrorMSG = "PAN mascherato invalido";
-        //string PANDoesntExistErrorMSG = "Il PAN dato non esiste";
 
-        public PANserver(IPANArchiveManager panArchiveManager)
+        public PANserver(IPANArchiveManager panArchiveManager, IMaskGenerator maskGen)
         {
             _panArchiveManager = panArchiveManager;
-            //defaultFileName = AppDomain.CurrentDomain.BaseDirectory + "\\PANsTest.txt";
+            _maskGen = maskGen;
         }
 
         public bool AcceptPAN(string inputPAN)
@@ -63,7 +63,6 @@ namespace PANserver
 
         public string GetMask(string PAN)
         {
-            var maskGen = new MaskGenerator();
             if (!AcceptPAN(PAN))
             {
                 return invalidPANerrorMSG;
@@ -73,7 +72,7 @@ namespace PANserver
                 string mask = _panArchiveManager.SearchMask(PAN);
                 if (mask == null)
                 {
-                    mask = maskGen.CreateMask(PAN);
+                    mask = _maskGen.CreateMask(PAN);
                     _panArchiveManager.AddPanAndMask(PAN, mask);
                 }
                 return mask;

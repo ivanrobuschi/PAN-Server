@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PANserver
 {
-    public class MaskGenerator
+    public class MaskGenerator : IMaskGenerator
     {
         public string CreateMask(string PAN)
         {

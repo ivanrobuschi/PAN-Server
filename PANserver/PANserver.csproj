@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMaskGenerator.cs" />
     <Compile Include="IPANArchiveManager.cs" />
     <Compile Include="MaskGenerator.cs" />
     <Compile Include="PANArchiveManager.cs" />
